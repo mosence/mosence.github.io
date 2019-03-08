@@ -80,4 +80,4 @@ theme: landscape
 deploy:
   type: git
   repo: git@github.com:mosence/mosence.github.io.git
-  branch: deploy
+  branch: master
