@@ -5,15 +5,19 @@
   
 
   
-  <title>Hexo</title>
+  <title>开源N步，如何提交maven中央仓库 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="https://mosence.github.io/index.html">
+  <meta name="description" content="Apache Maven 是源码管理和工程构建工具，我们也习惯了如何从中央仓库中通过groupId和artifactId去管理自己的项目依赖。 在公司，我们可能也习惯使用公司私有的maven仓库去发布我们的源码包，但是如何去把我们的开源项目包提交中央仓库以提供更多使用者呢？ 首先，需要了解中央仓库是什么组织在管理的 sonatype sonatype document sonatype jira">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开源N步，如何提交maven中央仓库">
+<meta property="og:url" content="https://mosence.github.io/2019/04/09/开源N步，如何提交maven中央仓库/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Apache Maven 是源码管理和工程构建工具，我们也习惯了如何从中央仓库中通过groupId和artifactId去管理自己的项目依赖。 在公司，我们可能也习惯使用公司私有的maven仓库去发布我们的源码包，但是如何去把我们的开源项目包提交中央仓库以提供更多使用者呢？ 首先，需要了解中央仓库是什么组织在管理的 sonatype sonatype document sonatype jira">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-09T02:36:34.091Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="开源N步，如何提交maven中央仓库">
+<meta name="twitter:description" content="Apache Maven 是源码管理和工程构建工具，我们也习惯了如何从中央仓库中通过groupId和artifactId去管理自己的项目依赖。 在公司，我们可能也习惯使用公司私有的maven仓库去发布我们的源码包，但是如何去把我们的开源项目包提交中央仓库以提供更多使用者呢？ 首先，需要了解中央仓库是什么组织在管理的 sonatype sonatype document sonatype jira">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -60,9 +64,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-开源N步，如何提交maven中央仓库" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-开源N步，如何提交maven中央仓库" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/04/09/开源N步，如何提交maven中央仓库/" class="article-date">
   <time datetime="2019-04-09T01:30:54.000Z" itemprop="datePublished">2019-04-09</time>
@@ -75,8 +77,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
+    <h1 class="article-title" itemprop="name">
+      开源N步，如何提交maven中央仓库
     </h1>
   
 
@@ -110,101 +112,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-SpringBootAdmin中集成SwaggerApi" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/" class="article-date">
-  <time datetime="2019-04-01T03:45:57.000Z" itemprop="datePublished">2019-04-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
-    </h1>
+    <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">SpringBootAdmin中集成SwaggerApi</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。</p>
-<p>另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。</p>
-<p>首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs</p>
-<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  boot:</span></span><br><span class="line"><span class="attr">    admin:</span></span><br><span class="line">	  <span class="attr">probed-endpoints:</span> <span class="string">api-docs,health,env,metrics,httptrace:trace,threaddump:dump,jolokia,info,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents</span></span><br></pre></td></tr></table></figure>
-<p>然后，创建一个vuejs项目去扩展SpringBootAdmin功能，如：<br><a href="https://github.com/mosence/spring-boot-admin-swagger-view" target="_blank" rel="noopener">spring-boot-admin-swagger-view</a></p>
-<p>maven打成jar包后引入SpringBootAdmin项目或者npm打包后把dist目录文件copy到/reousrces/META-INF/spring-boot-admin-server-ui/extensious/api-docs</p>
-<p>接着在各个服务开放/api-docs端点，在SpringBoot 2.X中，访问路径为/actuator/api-docs，如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Endpoint</span>(id = <span class="string">"api-docs"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletSwaggerApiEndpoint</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> HttpServletRequest servletRequest;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DocumentationCache documentationCache;</span><br><span class="line">    <span class="keyword">private</span> ServiceModelToSwagger2Mapper mapper;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServletSwaggerApiEndpoint</span><span class="params">(DocumentationCache documentationCache,</span></span></span><br><span class="line"><span class="function"><span class="params">                                      ServiceModelToSwagger2Mapper mapper)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.documentationCache = documentationCache;</span><br><span class="line">        <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="meta">@ReadOperation</span>(produces = <span class="string">"application/json"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Swagger <span class="title">loadApiDocs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String groupName = Docket.DEFAULT_GROUP_NAME;</span><br><span class="line">        Documentation documentation = documentationCache.documentationByGroup(groupName);</span><br><span class="line">        Swagger swagger = mapper.mapDocumentation(documentation);</span><br><span class="line"></span><br><span class="line">        UriComponents uriComponents = componentsFrom(servletRequest, swagger.getBasePath());</span><br><span class="line">        swagger.basePath(Strings.isNullOrEmpty(uriComponents.getPath()) ? <span class="string">"/"</span> : uriComponents.getPath());</span><br><span class="line">        swagger.setHost(uriComponents.getHost()+ <span class="string">":"</span> +uriComponents.getPort());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> swagger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>服务被SpringBootAdmin发现后就可以在服务实例中看到Api-Docs啦！</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://mosence.github.io/2019/04/01/SpringBootAdmin中集成SwaggerApi/" data-id="cju97yj9v00015kk5bg8xieht" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2019/03/08/hello-world/" class="article-date">
-  <time datetime="2019-03-08T09:22:33.562Z" itemprop="datePublished">2019-03-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/03/08/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://mosence.github.io/2019/03/08/hello-world/" data-id="cju97yj9a00005kk519tvrshs" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
 
 </section>
         
