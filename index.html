@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>MoSence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta property="og:type" content="website">
+<meta property="og:title" content="MoSence">
+<meta property="og:url" content="https://mosence.github.io/index.html">
+<meta property="og:site_name" content="MoSence">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MoSence">
+  
+    <link rel="alternate" href="/atom.xml" title="MoSence" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main">
+  
+    <article id="post-java-嵌入式LDAP" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/04/24/java-嵌入式LDAP/" class="article-date">
+  <time datetime="2019-04-24T01:34:00.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。</p>
+<p>直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.unboundid&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;unboundid-ldapsdk&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  ldap:</span><br><span class="line">    embedded:</span><br><span class="line">      base-dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">      port: 8888</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: mdp</span><br><span class="line"></span><br><span class="line">dn: dc=account,dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: account</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entry(base = &quot;dc=account,dc=mdp,dc=mosence,dc=org&quot;,objectClasses = &quot;person&quot;) //ldif中必须定义top，否则报错</span><br><span class="line">public class Account implements UserDetails &#123;</span><br><span class="line"></span><br><span class="line">    @Id</span><br><span class="line">    private Name oid;</span><br><span class="line"></span><br><span class="line">    @Attribute(name=&quot;cn&quot;)</span><br><span class="line">    private String username;</span><br><span class="line"></span><br><span class="line">    @DnAttribute(value = &quot;sn&quot;,index = 4) //这里的index表示，在entry实例中，dn标识从右到左第几个标识，并且在一个entry中必须最少一个index&gt;=0的@DnAttribute</span><br><span class="line">    @Attribute(name=&quot;sn&quot;)</span><br><span class="line">    private String id;</span><br><span class="line"></span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    @Transient</span><br><span class="line">    private String password; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setPassword(String password)&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = password;</span><br><span class="line">        this.bytesPassword = this.password.getBytes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getPassword()&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = new String(this.bytesPassword);</span><br><span class="line">        return this.password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Attribute(name = &quot;userPassword&quot;, type = Attribute.Type.BINARY)</span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    private byte[] bytesPassword; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setUsername(String username)&#123;</span><br><span class="line">        this.username = username;</span><br><span class="line">        this.id = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean enabled = true;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean lock = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean delete = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private long expired = -1;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() &#123;</span><br><span class="line">        return new HashSet&lt;&gt;(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonLocked() &#123;</span><br><span class="line">        return !lock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isCredentialsNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isEnabled() &#123;</span><br><span class="line">        return enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Repository</span><br><span class="line">public interface AccountRepository extends LdapRepository&lt;Account&gt; &#123;</span><br><span class="line">    Optional&lt;Account&gt; findByUsername(String username);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>没有实例代码哦，愉快的玩耍吧，反正理解 LDAP 的协议规范后还是很简单，这里就不介绍 LDAP 规范了。</p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-开源N步，如何提交maven中央仓库" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/04/09/开源N步，如何提交maven中央仓库/" class="article-date">
+  <time datetime="2019-04-09T01:30:54.000Z" itemprop="datePublished">2019-04-09</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>Apache Maven 是源码管理和工程构建工具，我们也习惯了如何从中央仓库中通过groupId和artifactId去管理自己的项目依赖。</p>
+<p>在公司，我们可能也习惯使用公司私有的maven仓库去发布我们的源码包，但是如何去把我们的开源项目包提交中央仓库以提供更多使用者呢？</p>
+<p>首先，需要了解中央仓库是什么组织在管理的</p>
+<p><a href="https://www.sonatype.com/" target="_blank" rel="noopener">sonatype</a></p>
+<p><a href="https://help.sonatype.com/docs" target="_blank" rel="noopener">sonatype document</a></p>
+<p><a href="https://issues.sonatype.org" target="_blank" rel="noopener">sonatype jira</a></p>
+<p>所以，我们要提交开源包中央仓库就需要sonatype的账户</p>
+<p>去<a href="https://issues.sonatype.org" target="_blank" rel="noopener">sonatype项目管理工具</a>中申请账户，然后创建一个自己的项目</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Project 选择Community Support</span><br><span class="line"></span><br><span class="line">Issue Type 选择New Project</span><br><span class="line"></span><br><span class="line">Summary 填上项目名称</span><br><span class="line"></span><br><span class="line">Description 填写项目描述</span><br><span class="line"></span><br><span class="line">Group Id 填写项目的groupId，规则需要按照 [中央仓库GroupId规则](http://central.sonatype.org/pages/choosing-your-coordinates.html)</span><br><span class="line"></span><br><span class="line">Project URL 填写项目的地址</span><br><span class="line"></span><br><span class="line">SCM url 填写项目的源码管理地址，如github管理的就填写github项目地址</span><br></pre></td></tr></table></figure></div>
+<p>以上是一个新Project必要的字段，如没有，则需要Configure Fields中勾选相应的字段。</p>
+<p>提交新项目申请后会有负责人审核项目，审核过程会用邮件告知</p>
+<p>审核成功后该 Issue 状态会变更成 RESOLVED 状态，Comments中也会提醒你如何去处理。</p>
+<p>接下来就是如同发布到私有库中的流程一样了，只不过中央库更加严格</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">首先pom中需要声明项目地址如：&lt;url&gt;https://github.com/mosence/xxx&lt;/url&gt;</span><br><span class="line"></span><br><span class="line">也需要声明开源协议如Apache开源协议</span><br><span class="line">&lt;licenses&gt;</span><br><span class="line">    &lt;license&gt;</span><br><span class="line">        &lt;name&gt;The Apache License, Version 2.0&lt;/name&gt;</span><br><span class="line">        &lt;url&gt;http://www.apache.org/licenses/LICENSE-2.0.txt&lt;/url&gt;</span><br><span class="line">    &lt;/license&gt;</span><br><span class="line">&lt;/licenses&gt;</span><br><span class="line"></span><br><span class="line">开发者信息</span><br><span class="line">&lt;developers&gt;</span><br><span class="line">    &lt;developer&gt;</span><br><span class="line">        &lt;name&gt;mosence&lt;/name&gt;</span><br><span class="line">        &lt;email&gt;mosence@gmail.com&lt;/email&gt;</span><br><span class="line">    &lt;/developer&gt;</span><br><span class="line">&lt;/developers&gt;</span><br><span class="line"></span><br><span class="line">项目源码管理地址</span><br><span class="line">&lt;scm&gt;</span><br><span class="line">    &lt;connection&gt;scm:git:https://github.com/mosence/xxx.git&lt;/connection&gt;</span><br><span class="line">    &lt;developerConnection&gt;scm:git:https://github.com/mosence/xxx.git&lt;/developerConnection&gt;</span><br><span class="line">    &lt;url&gt;https://github.com/mosence/xxx&lt;/url&gt;</span><br><span class="line">    &lt;tag&gt;v0.0.1&lt;/tag&gt;</span><br><span class="line">&lt;/scm&gt;</span><br><span class="line"></span><br><span class="line">发布管理中依照Comments中的提醒去添加发布地址</span><br><span class="line">&lt;distributionManagement&gt;</span><br><span class="line">    &lt;snapshotRepository&gt;</span><br><span class="line">        &lt;id&gt;sonatype&lt;/id&gt;</span><br><span class="line">        &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;</span><br><span class="line">    &lt;/snapshotRepository&gt;</span><br><span class="line">    &lt;repository&gt;</span><br><span class="line">        &lt;id&gt;sonatype&lt;/id&gt;</span><br><span class="line">        &lt;url&gt;https://oss.sonatype.org/service/local/staging/deploy/maven2/&lt;/url&gt;</span><br><span class="line">    &lt;/repository&gt;</span><br><span class="line">&lt;/distributionManagement&gt;</span><br><span class="line"></span><br><span class="line">插件中需要添加maven-release-plugin、maven-source-plugin、maven-javadoc-plugin来进行发布、源码发布、javadoc发布</span><br><span class="line"></span><br><span class="line">nexus-staging-maven-plugin来配置提交规范</span><br><span class="line"></span><br><span class="line">maven-gpg-plugin来对发布包进行gpg签名</span><br><span class="line"></span><br><span class="line">相应的插件用法就不详细介绍了</span><br></pre></td></tr></table></figure></div>
+<p>然后通过 mvn deploy 去发布你的开源包</p>
+<p>最后提醒一下版本号，-SNAPSHOT后缀会发布到快照版本库中，其他后缀发布在正式版本库中，正式版本库是没法覆盖删除的，请注意！</p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-SpringBootAdmin中集成SwaggerApi" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/" class="article-date">
+  <time datetime="2019-04-01T03:45:57.000Z" itemprop="datePublished">2019-04-01</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。</p>
+<p>另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。</p>
+<p>首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="YML"><figure class="iseeu highlight /yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  boot:</span></span><br><span class="line"><span class="attr">    admin:</span></span><br><span class="line">	  <span class="attr">probed-endpoints:</span> <span class="string">api-docs,health,env,metrics,httptrace:trace,threaddump:dump,jolokia,info,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents</span></span><br></pre></td></tr></table></figure></div>
+<p>然后，创建一个vuejs项目去扩展SpringBootAdmin功能，如：<br><a href="https://github.com/mosence/spring-boot-admin-swagger-view" target="_blank" rel="noopener">spring-boot-admin-swagger-view</a></p>
+<p>maven打成jar包后引入SpringBootAdmin项目或者npm打包后把dist目录文件copy到/reousrces/META-INF/spring-boot-admin-server-ui/extensious/api-docs</p>
+<p>接着在各个服务开放/api-docs端点，在SpringBoot 2.X中，访问路径为/actuator/api-docs，如：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Endpoint</span>(id = <span class="string">"api-docs"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletSwaggerApiEndpoint</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> HttpServletRequest servletRequest;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DocumentationCache documentationCache;</span><br><span class="line">    <span class="keyword">private</span> ServiceModelToSwagger2Mapper mapper;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServletSwaggerApiEndpoint</span><span class="params">(DocumentationCache documentationCache,</span></span></span><br><span class="line"><span class="function"><span class="params">                                      ServiceModelToSwagger2Mapper mapper)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.documentationCache = documentationCache;</span><br><span class="line">        <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="meta">@ReadOperation</span>(produces = <span class="string">"application/json"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Swagger <span class="title">loadApiDocs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String groupName = Docket.DEFAULT_GROUP_NAME;</span><br><span class="line">        Documentation documentation = documentationCache.documentationByGroup(groupName);</span><br><span class="line">        Swagger swagger = mapper.mapDocumentation(documentation);</span><br><span class="line"></span><br><span class="line">        UriComponents uriComponents = componentsFrom(servletRequest, swagger.getBasePath());</span><br><span class="line">        swagger.basePath(Strings.isNullOrEmpty(uriComponents.getPath()) ? <span class="string">"/"</span> : uriComponents.getPath());</span><br><span class="line">        swagger.setHost(uriComponents.getHost()+ <span class="string">":"</span> +uriComponents.getPort());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> swagger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>服务被SpringBootAdmin发现后就可以在服务实例中看到Api-Docs啦！</p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+    <article id="post-hello-world" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/03/08/hello-world/">Hello World</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/03/08/hello-world/" class="article-date">
+  <time datetime="2019-03-08T09:22:33.562Z" itemprop="datePublished">2019-03-08</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="BASH"><figure class="iseeu highlight /bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure></div>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
+
+
+
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/default-avatar.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        一路烟霞
+      
+    </h3>
+    <p class="avatar-slogan">
+      特别耐撕的小前端，资深的打酱油攻城狮。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/08/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 MoSence &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

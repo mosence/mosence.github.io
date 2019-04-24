@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>SpringBootAdmin中集成SwaggerApi | MoSence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。 另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。 首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs 1234spring:  bo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBootAdmin中集成SwaggerApi">
+<meta property="og:url" content="https://mosence.github.io/2019/04/01/SpringBootAdmin中集成SwaggerApi/index.html">
+<meta property="og:site_name" content="MoSence">
+<meta property="og:description" content="在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。 另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。 首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs 1234spring:  bo">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-01T04:05:04.971Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SpringBootAdmin中集成SwaggerApi">
+<meta name="twitter:description" content="在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。 另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。 首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs 1234spring:  bo">
+  
+    <link rel="alternate" href="/atom.xml" title="MoSence" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-SpringBootAdmin中集成SwaggerApi" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      SpringBootAdmin中集成SwaggerApi
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/" class="article-date">
+  <time datetime="2019-04-01T03:45:57.000Z" itemprop="datePublished">2019-04-01</time>
+</a>
+    
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>在使用SpringBoot以及SpringCloud搭建微服务时，我们可能会用SpringBootAdmin去监控各个服务。</p>
+<p>另外我们还会使用Springfox-Swagger去生成Swagger文档，那么可以把Swagger文档集成到SpringBootAdmin。</p>
+<p>首先，SpringBootAdmin监听/api-docs端点，在相应配置中添加/api-docs</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="YML"><figure class="iseeu highlight /yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  boot:</span></span><br><span class="line"><span class="attr">    admin:</span></span><br><span class="line">	  <span class="attr">probed-endpoints:</span> <span class="string">api-docs,health,env,metrics,httptrace:trace,threaddump:dump,jolokia,info,logfile,refresh,flyway,liquibase,heapdump,loggers,auditevents</span></span><br></pre></td></tr></table></figure></div>
+<p>然后，创建一个vuejs项目去扩展SpringBootAdmin功能，如：<br><a href="https://github.com/mosence/spring-boot-admin-swagger-view" target="_blank" rel="noopener">spring-boot-admin-swagger-view</a></p>
+<p>maven打成jar包后引入SpringBootAdmin项目或者npm打包后把dist目录文件copy到/reousrces/META-INF/spring-boot-admin-server-ui/extensious/api-docs</p>
+<p>接着在各个服务开放/api-docs端点，在SpringBoot 2.X中，访问路径为/actuator/api-docs，如：</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="JAVA"><figure class="iseeu highlight /java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Endpoint</span>(id = <span class="string">"api-docs"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServletSwaggerApiEndpoint</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Resource</span></span><br><span class="line">    <span class="keyword">private</span> HttpServletRequest servletRequest;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> DocumentationCache documentationCache;</span><br><span class="line">    <span class="keyword">private</span> ServiceModelToSwagger2Mapper mapper;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ServletSwaggerApiEndpoint</span><span class="params">(DocumentationCache documentationCache,</span></span></span><br><span class="line"><span class="function"><span class="params">                                      ServiceModelToSwagger2Mapper mapper)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.documentationCache = documentationCache;</span><br><span class="line">        <span class="keyword">this</span>.mapper = mapper;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="meta">@ReadOperation</span>(produces = <span class="string">"application/json"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Swagger <span class="title">loadApiDocs</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String groupName = Docket.DEFAULT_GROUP_NAME;</span><br><span class="line">        Documentation documentation = documentationCache.documentationByGroup(groupName);</span><br><span class="line">        Swagger swagger = mapper.mapDocumentation(documentation);</span><br><span class="line"></span><br><span class="line">        UriComponents uriComponents = componentsFrom(servletRequest, swagger.getBasePath());</span><br><span class="line">        swagger.basePath(Strings.isNullOrEmpty(uriComponents.getPath()) ? <span class="string">"/"</span> : uriComponents.getPath());</span><br><span class="line">        swagger.setHost(uriComponents.getHost()+ <span class="string">":"</span> +uriComponents.getPort());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> swagger;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>服务被SpringBootAdmin发现后就可以在服务实例中看到Api-Docs啦！</p>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2019/04/09/开源N步，如何提交maven中央仓库/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            开源N步，如何提交maven中央仓库
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2019/03/08/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Hello World</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/default-avatar.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        一路烟霞
+      
+    </h3>
+    <p class="avatar-slogan">
+      特别耐撕的小前端，资深的打酱油攻城狮。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/08/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 MoSence &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

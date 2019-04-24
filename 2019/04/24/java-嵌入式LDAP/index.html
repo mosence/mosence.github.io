@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>java 嵌入式LDAP | MoSence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。 直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.unboundid&amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java 嵌入式LDAP">
+<meta property="og:url" content="https://mosence.github.io/2019/04/24/java-嵌入式LDAP/index.html">
+<meta property="og:site_name" content="MoSence">
+<meta property="og:description" content="最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。 直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.unboundid&amp;lt">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-24T01:54:34.841Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="java 嵌入式LDAP">
+<meta name="twitter:description" content="最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。 直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类 1234&amp;lt;dependency&amp;gt;    &amp;lt;groupId&amp;gt;com.unboundid&amp;lt">
+  
+    <link rel="alternate" href="/atom.xml" title="MoSence" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.webp">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" title="图片来自网络">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title>首页</a>
+      
+        <a class="nav-item" href="/archives" title>归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-java-嵌入式LDAP" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      java 嵌入式LDAP
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/04/24/java-嵌入式LDAP/" class="article-date">
+  <time datetime="2019-04-24T01:34:00.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。</p>
+<p>直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类</p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.unboundid&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;unboundid-ldapsdk&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  ldap:</span><br><span class="line">    embedded:</span><br><span class="line">      base-dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">      port: 8888</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: mdp</span><br><span class="line"></span><br><span class="line">dn: dc=account,dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: account</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entry(base = &quot;dc=account,dc=mdp,dc=mosence,dc=org&quot;,objectClasses = &quot;person&quot;) //ldif中必须定义top，否则报错</span><br><span class="line">public class Account implements UserDetails &#123;</span><br><span class="line"></span><br><span class="line">    @Id</span><br><span class="line">    private Name oid;</span><br><span class="line"></span><br><span class="line">    @Attribute(name=&quot;cn&quot;)</span><br><span class="line">    private String username;</span><br><span class="line"></span><br><span class="line">    @DnAttribute(value = &quot;sn&quot;,index = 4) //这里的index表示，在entry实例中，dn标识从右到左第几个标识，并且在一个entry中必须最少一个index&gt;=0的@DnAttribute</span><br><span class="line">    @Attribute(name=&quot;sn&quot;)</span><br><span class="line">    private String id;</span><br><span class="line"></span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    @Transient</span><br><span class="line">    private String password; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setPassword(String password)&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = password;</span><br><span class="line">        this.bytesPassword = this.password.getBytes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getPassword()&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = new String(this.bytesPassword);</span><br><span class="line">        return this.password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Attribute(name = &quot;userPassword&quot;, type = Attribute.Type.BINARY)</span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    private byte[] bytesPassword; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setUsername(String username)&#123;</span><br><span class="line">        this.username = username;</span><br><span class="line">        this.id = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean enabled = true;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean lock = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean delete = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private long expired = -1;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() &#123;</span><br><span class="line">        return new HashSet&lt;&gt;(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonLocked() &#123;</span><br><span class="line">        return !lock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isCredentialsNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isEnabled() &#123;</span><br><span class="line">        return enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Repository</span><br><span class="line">public interface AccountRepository extends LdapRepository&lt;Account&gt; &#123;</span><br><span class="line">    Optional&lt;Account&gt; findByUsername(String username);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>没有实例代码哦，愉快的玩耍吧，反正理解 LDAP 的协议规范后还是很简单，这里就不介绍 LDAP 规范了。</p>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2019/04/09/开源N步，如何提交maven中央仓库/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">开源N步，如何提交maven中央仓库</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/default-avatar.jpeg" title="图片来自网络">
+    <h3 class="avatar-name">
+      
+        一路烟霞
+      
+    </h3>
+    <p class="avatar-slogan">
+      特别耐撕的小前端，资深的打酱油攻城狮。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
+          </li>
+        
+          <li>
+            <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
+          </li>
+        
+          <li>
+            <a href="/2019/03/08/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 MoSence &nbsp;&nbsp;
+    驱动于 <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>
