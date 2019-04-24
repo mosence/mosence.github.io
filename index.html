@@ -62,6 +62,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-java-嵌入式LDAP" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/04/24/java-嵌入式LDAP/" class="article-date">
+  <time datetime="2019-04-24T01:34:00.000Z" itemprop="datePublished">2019-04-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近要用到LDAP来统一用户信息存储，当然选型最广泛使用的并且自身就有层级的LDAP来存储了，但是部署一个LDAP服务器还是挺麻烦的，于是找了spring体系下就支持的嵌入式内存LDAP。</p>
+<p>直接上代码好了，以下依次是依赖、配置、数据预定义存储文件、Entry类、Repository类</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.unboundid&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;unboundid-ldapsdk&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring:</span><br><span class="line">  ldap:</span><br><span class="line">    embedded:</span><br><span class="line">      base-dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">      port: 8888</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">dn: dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: mdp</span><br><span class="line"></span><br><span class="line">dn: dc=account,dc=mdp,dc=mosence,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: domain</span><br><span class="line">dc: account</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">@Entry(base = &quot;dc=account,dc=mdp,dc=mosence,dc=org&quot;,objectClasses = &quot;person&quot;) //ldif中必须定义top，否则报错</span><br><span class="line">public class Account implements UserDetails &#123;</span><br><span class="line"></span><br><span class="line">    @Id</span><br><span class="line">    private Name oid;</span><br><span class="line"></span><br><span class="line">    @Attribute(name=&quot;cn&quot;)</span><br><span class="line">    private String username;</span><br><span class="line"></span><br><span class="line">    @DnAttribute(value = &quot;sn&quot;,index = 4) //这里的index表示，在entry实例中，dn标识从右到左第几个标识，并且在一个entry中必须最少一个index&gt;=0的@DnAttribute</span><br><span class="line">    @Attribute(name=&quot;sn&quot;)</span><br><span class="line">    private String id;</span><br><span class="line"></span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    @Transient</span><br><span class="line">    private String password; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setPassword(String password)&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = password;</span><br><span class="line">        this.bytesPassword = this.password.getBytes();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getPassword()&#123; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line">        this.password = new String(this.bytesPassword);</span><br><span class="line">        return this.password;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Attribute(name = &quot;userPassword&quot;, type = Attribute.Type.BINARY)</span><br><span class="line">    @org.codehaus.jackson.annotate.JsonIgnore</span><br><span class="line">    @com.fasterxml.jackson.annotation.JsonIgnore</span><br><span class="line">    private byte[] bytesPassword; //因为objectClasses = &quot;person&quot;中，userPassword必须是BINARY类型，所以这里这么搞</span><br><span class="line"></span><br><span class="line">    public void setUsername(String username)&#123;</span><br><span class="line">        this.username = username;</span><br><span class="line">        this.id = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean enabled = true;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean lock = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private boolean delete = false;</span><br><span class="line"></span><br><span class="line">    @Transient</span><br><span class="line">    private long expired = -1;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() &#123;</span><br><span class="line">        return new HashSet&lt;&gt;(0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isAccountNonLocked() &#123;</span><br><span class="line">        return !lock;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isCredentialsNonExpired() &#123;</span><br><span class="line">        return (expired==-1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean isEnabled() &#123;</span><br><span class="line">        return enabled;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Repository</span><br><span class="line">public interface AccountRepository extends LdapRepository&lt;Account&gt; &#123;</span><br><span class="line">    Optional&lt;Account&gt; findByUsername(String username);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>没有实例代码哦，愉快的玩耍吧，反正理解 LDAP 的协议规范后还是很简单，这里就不介绍 LDAP 规范了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://mosence.github.io/2019/04/24/java-嵌入式LDAP/" data-id="cjuukfzka0003f0k57x08jkta" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-开源N步，如何提交maven中央仓库" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/04/09/开源N步，如何提交maven中央仓库/" class="article-date">
@@ -104,7 +148,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://mosence.github.io/2019/04/09/开源N步，如何提交maven中央仓库/" data-id="cju9825r00001p4k54k9xm3pk" class="article-share-link">Share</a>
+      <a data-url="https://mosence.github.io/2019/04/09/开源N步，如何提交maven中央仓库/" data-id="cjuukfzk90002f0k5kf1yybm4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -149,7 +193,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://mosence.github.io/2019/04/01/SpringBootAdmin中集成SwaggerApi/" data-id="cju9825r70002p4k5r28v6r9w" class="article-share-link">Share</a>
+      <a data-url="https://mosence.github.io/2019/04/01/SpringBootAdmin中集成SwaggerApi/" data-id="cjuukfzjy0000f0k53i0g84nb" class="article-share-link">Share</a>
       
       
     </footer>
@@ -194,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://mosence.github.io/2019/03/08/hello-world/" data-id="cju9825qq0000p4k5d2r4e0wg" class="article-share-link">Share</a>
+      <a data-url="https://mosence.github.io/2019/03/08/hello-world/" data-id="cjuukfzk60001f0k5bh77t7z6" class="article-share-link">Share</a>
       
       
     </footer>
@@ -233,6 +277,10 @@
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/04/24/java-嵌入式LDAP/">java 嵌入式LDAP</a>
+          </li>
         
           <li>
             <a href="/2019/04/09/开源N步，如何提交maven中央仓库/">开源N步，如何提交maven中央仓库</a>
