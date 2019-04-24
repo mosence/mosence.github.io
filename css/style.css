@@ -318,7 +318,7 @@ html, body, #fullpage{
   box-shadow: 0 1px 6px rgba(0, 0, 0, .3)
 }
 #header::after{
-  content: "阅读有风险 参考需谨慎";
+  content: "执剑四顾百万路 回首远眺一丝柔";
   display: block;
   text-align: center;
   line-height: 30px;
