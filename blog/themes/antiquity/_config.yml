@@ -47,11 +47,6 @@ avatar_title: 图片来自网络
 highlightPanel: cloud
 
 #Gitment
-gitment:
-  owner: 
-  repo: 
-  client_id: 
-  client_secret: 
 
 # Miscellaneous
 google_analytics:
