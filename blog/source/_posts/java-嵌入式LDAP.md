@@ -14,15 +14,16 @@ tags:
     </dependency>
 ```
 
-```application.yaml
+```yaml
+#application.yaml
 spring:
   ldap:
     embedded:
       base-dn: dc=mdp,dc=mosence,dc=org
       port: 8888
 ```
-
-```schema.ldif
+schema.ldif
+```ldif
 dn: dc=mdp,dc=mosence,dc=org
 objectClass: top
 objectClass: domain
@@ -34,8 +35,9 @@ objectClass: domain
 dc: account
 
 ```
-
-```Account.java
+Account.java
+```java
+/* Account.java */
 @Data
 @Entry(base = "dc=account,dc=mdp,dc=mosence,dc=org",objectClasses = "person") //ldif中必须定义top，否则报错
 public class Account implements UserDetails {
@@ -117,7 +119,8 @@ public class Account implements UserDetails {
 }
 ```
 
-```AccountRepository.java
+```java
+/* AccountRepository.java */
 @Repository
 public interface AccountRepository extends LdapRepository<Account> {
     Optional<Account> findByUsername(String username);
