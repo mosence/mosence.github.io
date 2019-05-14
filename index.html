@@ -51,11 +51,52 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
+    <article id="post-SpringBoot额外的jar" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/14/SpringBoot额外的jar/">SpringBoot额外的jar</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/05/14/SpringBoot额外的jar/" class="article-date">
+  <time datetime="2019-05-14T06:20:11.000Z" itemprop="datePublished">2019-05-14</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p><a href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#executable-jar-launching" target="_blank" rel="noopener">SpringBoot Doc</a></p>
+<p><a href="https://docs.spring.io/spring-boot/docs/current/maven-plugin/" target="_blank" rel="noopener">SpringBoot plugin</a></p>
+<div class="highlight-box" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true" data-rel="XML"><figure class="iseeu highlight /xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- pom.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">layout</span>&gt;</span>ZIP<span class="tag">&lt;/<span class="name">layout</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure></div>
+<p>ZIP (alias to DIR): similar to the JAR layout using PropertiesLauncher.<br>使用 PropertiesLauncher 启动。</p>
+<p>经过读代码分析，默认的 Jar layout 使用的 JarLauncher 无法引入外部 jar，只有使用 PropertiesLauncher 才可以通过配置 loader.path 去指定外部 jar 路径引入。</p>
+<p>注：PropertiesLauncher 在 SpringBootLoader 中。<a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-tools/spring-boot-loader/src/main/java/org/springframework/boot/loader/PropertiesLauncher.java" target="_blank" rel="noopener">github</a></p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
     <article id="post-flinkx简易用法" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
   <div class="article-meta">
-    <a href="/2019/04/24/flinkx简易用法/" class="article-date">
-  <time datetime="2019-04-24T01:34:00.000Z" itemprop="datePublished">2019-04-24</time>
+    <a href="/2019/05/10/flinkx简易用法/" class="article-date">
+  <time datetime="2019-05-10T01:34:00.000Z" itemprop="datePublished">2019-05-10</time>
 </a>
     
     
@@ -310,7 +351,7 @@
   <div class="widget-box">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/">五月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/">四月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li></ul>
     </div>
   </div>
 
@@ -322,7 +363,11 @@
       <ul>
         
           <li>
-            <a href="/2019/04/24/flinkx简易用法/">(no title)</a>
+            <a href="/2019/05/14/SpringBoot额外的jar/">SpringBoot额外的jar</a>
+          </li>
+        
+          <li>
+            <a href="/2019/05/10/flinkx简易用法/">(no title)</a>
           </li>
         
           <li>
@@ -335,10 +380,6 @@
         
           <li>
             <a href="/2019/04/01/SpringBootAdmin中集成SwaggerApi/">SpringBootAdmin中集成SwaggerApi</a>
-          </li>
-        
-          <li>
-            <a href="/2019/03/08/hello-world/">Hello World</a>
           </li>
         
       </ul>
