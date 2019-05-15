@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '7.1.1',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="Maven+Docker 部署安装jdk8镜像 docker pull openjdk:8-jdk-alpine  maven插件推送方式 修改/etc/docker/daemon.json文件，加入hosts配置即可。 注意 使用本地docker构建，不要用的生产服务器上，这种方式容易被别人注入木马本地局域网 192.168.10.222  12345&amp;#123;  &quot;hosts&quot;:[&quot;tcp:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【转】docker 部署 springboot">
+<meta property="og:url" content="https://mosence.github.io/2019/05/15/docker-springboot/index.html">
+<meta property="og:site_name" content="MoSence">
+<meta property="og:description" content="Maven+Docker 部署安装jdk8镜像 docker pull openjdk:8-jdk-alpine  maven插件推送方式 修改/etc/docker/daemon.json文件，加入hosts配置即可。 注意 使用本地docker构建，不要用的生产服务器上，这种方式容易被别人注入木马本地局域网 192.168.10.222  12345&amp;#123;  &quot;hosts&quot;:[&quot;tcp:">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-05-15T01:02:32.606Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="【转】docker 部署 springboot">
+<meta name="twitter:description" content="Maven+Docker 部署安装jdk8镜像 docker pull openjdk:8-jdk-alpine  maven插件推送方式 修改/etc/docker/daemon.json文件，加入hosts配置即可。 注意 使用本地docker构建，不要用的生产服务器上，这种方式容易被别人注入木马本地局域网 192.168.10.222  12345&amp;#123;  &quot;hosts&quot;:[&quot;tcp:">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://mosence.github.io/2019/05/15/docker-springboot/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>【转】docker 部署 springboot | MoSence</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">MoSence</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mosence.github.io/2019/05/15/docker-springboot/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="MoSence">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="MoSence">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【转】docker 部署 springboot
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-15 08:56:59 / 修改时间：09:02:32" itemprop="dateCreated datePublished" datetime="2019-05-15T08:56:59+08:00">2019-05-15</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Maven-Docker-部署"><a href="#Maven-Docker-部署" class="headerlink" title="Maven+Docker 部署"></a>Maven+Docker 部署</h1><h2 id="安装jdk8镜像"><a href="#安装jdk8镜像" class="headerlink" title="安装jdk8镜像"></a>安装jdk8镜像</h2><blockquote>
+<p>docker pull openjdk:8-jdk-alpine</p>
+</blockquote>
+<h2 id="maven插件推送方式"><a href="#maven插件推送方式" class="headerlink" title="maven插件推送方式"></a>maven插件推送方式</h2><ol>
+<li>修改/etc/docker/daemon.json文件，加入hosts配置即可。 注意 使用本地docker构建，不要用的生产服务器上，这种方式容易被别人注入木马<br>本地局域网 192.168.10.222</li>
+</ol>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">  <span class="attr">"hosts"</span>:[<span class="string">"tcp://0.0.0.0:2375"</span>,<span class="string">"unix:///var/run/docker.sock"</span>]</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>在settings.xml文件的同级目录创建settings-security.xml文件<br>在cmd命令行中使用，在bash中特殊字符会出现转义问题<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mvn --encrypt-master-password &lt;password&gt;</span><br><span class="line">&#123;4Cmy61mOMasHCreAdBngs40S7FJ8dFcD8MG9jCJKSNA=&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;settingsSecurity&gt;</span><br><span class="line">  &lt;master&gt;&#123;4Cmy61mOMasHCreAdBngs40S7FJ8dFcD8MG9jCJKSNA=&#125;&lt;/master&gt;</span><br><span class="line">&lt;/settingsSecurity&gt;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>编辑settings.xml<br>最后使用你的私有仓库访问密码生成服务密码，将生成的密码写入到settings.xml的</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mvn --encrypt-password &lt;password&gt;</span><br><span class="line">&#123;RCeI2AmEXXgHmFttKbzhhXBLq/vQdczAluUl3Vd7tsg=&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;server&gt;</span><br><span class="line">		&lt;id&gt;docker-aliyun&lt;/id&gt;</span><br><span class="line">		&lt;username&gt;matosiki@163.com&lt;/username&gt;</span><br><span class="line">		&lt;password&gt;&#123;RCeI2AmEXXgHmFttKbzhhXBLq/vQdczAluUl3Vd7tsg=&#125;&lt;/password&gt;</span><br><span class="line">		&lt;configuration&gt;</span><br><span class="line">			&lt;email&gt;matosiki@163.com&lt;/email&gt;</span><br><span class="line">		&lt;/configuration&gt;</span><br><span class="line">	&lt;/server&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">2. 重新加载配置文件，并重启docker</span><br><span class="line"></span><br><span class="line">&gt; systemctl daemon-reload</span><br><span class="line"></span><br><span class="line">&gt; systemctl restart docker</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">3. 验证，直接访问：</span><br><span class="line"></span><br><span class="line">&gt; curl 127.0.0.1:2375/info</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## java项目</span><br><span class="line"></span><br><span class="line">1. maven pom.xm 配置文件</span><br><span class="line"></span><br><span class="line">```xml</span><br><span class="line">&lt;build&gt;</span><br><span class="line"></span><br><span class="line">        &lt;plugins&gt;</span><br><span class="line"></span><br><span class="line">            &lt;!-- springboot打包 --&gt;</span><br><span class="line"></span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line"></span><br><span class="line">                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line"></span><br><span class="line">                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line"></span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line"></span><br><span class="line">             </span><br><span class="line"></span><br><span class="line">            &lt;plugin&gt;</span><br><span class="line"></span><br><span class="line">                &lt;groupId&gt;com.spotify&lt;/groupId&gt;</span><br><span class="line"></span><br><span class="line">                &lt;artifactId&gt;docker-maven-plugin&lt;/artifactId&gt;</span><br><span class="line"></span><br><span class="line">                &lt;version&gt;0.4.9&lt;/version&gt;</span><br><span class="line"></span><br><span class="line">                &lt;configuration&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;!-- 镜像名称  --&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;imageName&gt;matosiki/springboot-docker-demo&lt;/imageName&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;!-- docker远程服务器地址 --&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;dockerHost&gt;http://服务器IP:2375&lt;/dockerHost&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;!-- Dockerfile文件存放目录 --&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;dockerDirectory&gt;src/main/docker&lt;/dockerDirectory&gt;</span><br><span class="line"></span><br><span class="line">                   &lt;resources&gt;</span><br><span class="line"></span><br><span class="line">                    &lt;resource&gt;</span><br><span class="line"></span><br><span class="line">                        &lt;directory&gt;$&#123;project.build.directory&#125;&lt;/directory&gt;</span><br><span class="line"></span><br><span class="line">                        &lt;include&gt;$&#123;project.build.finalName&#125;.jar&lt;/include&gt;</span><br><span class="line"></span><br><span class="line">                    &lt;/resource&gt;</span><br><span class="line"></span><br><span class="line">                &lt;/resources&gt;</span><br><span class="line"></span><br><span class="line">                &lt;/configuration&gt;</span><br><span class="line"></span><br><span class="line">            &lt;/plugin&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/plugins&gt;</span><br><span class="line"></span><br><span class="line">    &lt;/build&gt;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>编写Dockerfile 文件</li>
+</ol>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Dockerfile</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 基于的镜像</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">FROM</span> openjdk:<span class="number">8</span>-jdk-alpine</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装字体，Captcha需要字体支持</span></span><br><span class="line"><span class="keyword">RUN</span> set -xe &amp;&amp; apk --no-cache add ttf-dejavu fontconfig</span><br><span class="line"></span><br><span class="line"><span class="keyword">VOLUME</span> /opt/tmp</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="keyword">ADD</span> projectname-1.0.0-SNAPSHOT.jar app.jar</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="comment"># -Djava.security.egd=file:/dev/./urandom 可解决tomcat可能启动慢的问题</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 具体可查看：https://www.cnblogs.com/mightyvincent/p/7685310.html</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">ENTRYPOINT</span> ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line"></span><br><span class="line"><span class="comment"># 对外端口</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">8080</span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>编码运行</li>
+</ol>
+<blockquote>
+<p>mvn clean package docker:build -Dmaven.test.skip=true</p>
+</blockquote>
+<ol start="4">
+<li>查看镜像</li>
+</ol>
+<blockquote>
+<p>docker images</p>
+</blockquote>
+<ol start="5">
+<li>运行镜像，查看是否启动正常</li>
+</ol>
+<blockquote>
+<p>docker run -d -p 8080:8080 matosiki/springboot-docker-demo</p>
+</blockquote>
+<ol start="6">
+<li>基于已有镜像运行 jar</li>
+</ol>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 1234:8080 -v /opt/docker/projectname-1.0.0-SNAPSHOT.jar:/usr/projectname-1.0.0-SNAPSHOT.jar --name SpringbootByJar openjdk:8-jdk-alpine java -jar /usr/projectname-1.0.0-SNAPSHOT.jar</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/14/SpringBoot额外的jar/" rel="next" title="SpringBoot额外的jar">
+                <i class="fa fa-chevron-left"></i> SpringBoot额外的jar
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">MoSence</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Maven-Docker-部署"><span class="nav-number">1.</span> <span class="nav-text">Maven+Docker 部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装jdk8镜像"><span class="nav-number">1.1.</span> <span class="nav-text">安装jdk8镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#maven插件推送方式"><span class="nav-number">1.2.</span> <span class="nav-text">maven插件推送方式</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">MoSence</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> v7.1.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.1"></script>
+
+  <script src="/js/motion.js?v=7.1.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.1"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.1"></script>
+<script src="/js/post-details.js?v=7.1.1"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
